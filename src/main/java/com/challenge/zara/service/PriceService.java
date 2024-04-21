@@ -25,9 +25,11 @@ public class PriceService {
 
     public Optional<Price> getPriceByDateAndProductIdAndChainId(LocalDateTime date, Long productId, Long chainId) {
         try {
+            // Se filtra por fecha, producto e identificador de cadena, y se ordena por prioridad
             List<Price> prices = priceRepository.findByProductIdAndBrandIdAndStartDateBeforeAndEndDateAfterOrderByPriorityDesc(
                     productId, chainId, date, LocalDateTime.now());
 
+            // Se selecciona el precio con mayor prioridad
             return prices.stream()
                     .filter(price -> date.isAfter(price.getStartDate()) || date.isEqual(price.getStartDate()))
                     .filter(price -> date.isBefore(price.getEndDate()) || date.isEqual(price.getEndDate()))
