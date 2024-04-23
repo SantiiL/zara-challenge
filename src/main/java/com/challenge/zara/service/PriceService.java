@@ -4,6 +4,9 @@ import com.challenge.zara.model.Price;
 import com.challenge.zara.repository.PriceRepository;
 import com.challenge.zara.utils.PriceNotFoundException;
 import com.challenge.zara.utils.PriceServiceException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,8 @@ import java.util.Optional;
 
 @Service
 public class PriceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PriceService.class);
 
     private final PriceRepository priceRepository;
 
