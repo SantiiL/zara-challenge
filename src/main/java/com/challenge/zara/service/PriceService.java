@@ -1,5 +1,6 @@
 package com.challenge.zara.service;
 
+import com.challenge.zara.controller.PriceController;
 import com.challenge.zara.model.Price;
 import com.challenge.zara.repository.PriceRepository;
 import com.challenge.zara.utils.PriceNotFoundException;
@@ -19,9 +20,8 @@ import java.util.Optional;
 @Service
 public class PriceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PriceService.class);
-
     private final PriceRepository priceRepository;
+    private static final Logger logger = LoggerFactory.getLogger(PriceService.class);
 
     @Autowired
     public PriceService(PriceRepository priceRepository) {
@@ -35,14 +35,13 @@ public class PriceService {
                     productId, chainId, date, LocalDateTime.now());
 
             // Se selecciona el precio con mayor prioridad
-            return prices.stream()
-                    .filter(price -> date.isAfter(price.getStartDate()) || date.isEqual(price.getStartDate()))
-                    .filter(price -> date.isBefore(price.getEndDate()) || date.isEqual(price.getEndDate()))
-                    .max(Comparator.comparingInt(Price::getPriority));
-        } catch (DataIntegrityViolationException e) {
-            throw new PriceNotFoundException("Price not found for the given parameters");
+            Optional<Price> selectedPrice = prices.stream().max(Comparator.comparingInt(Price::getPriority));
+
+            return selectedPrice;
         } catch (Exception e) {
-            throw new PriceServiceException("An error occurred while retrieving the price", e);
+            // Registramos un error pero no lanzamos una excepción
+            logger.error("An unexpected error occurred:", e);
+            return Optional.empty();
         }
     }
 }
