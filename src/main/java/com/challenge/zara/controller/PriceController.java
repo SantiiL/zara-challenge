@@ -2,8 +2,7 @@ package com.challenge.zara.controller;
 
 import com.challenge.zara.model.Price;
 import com.challenge.zara.service.PriceService;
-import com.challenge.zara.utils.PriceNotFoundException;
-import org.antlr.v4.runtime.misc.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

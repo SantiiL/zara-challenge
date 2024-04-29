@@ -1,15 +1,11 @@
 package com.challenge.zara.service;
 
-import com.challenge.zara.controller.PriceController;
 import com.challenge.zara.model.Price;
 import com.challenge.zara.repository.PriceRepository;
-import com.challenge.zara.utils.PriceNotFoundException;
-import com.challenge.zara.utils.PriceServiceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,9 +31,7 @@ public class PriceService {
                     productId, chainId, date, LocalDateTime.now());
 
             // Se selecciona el precio con mayor prioridad
-            Optional<Price> selectedPrice = prices.stream().max(Comparator.comparingInt(Price::getPriority));
-
-            return selectedPrice;
+            return prices.stream().max(Comparator.comparingInt(Price::getPriority));
         } catch (Exception e) {
             // Registramos un error pero no lanzamos una excepción
             logger.error("An unexpected error occurred:", e);
