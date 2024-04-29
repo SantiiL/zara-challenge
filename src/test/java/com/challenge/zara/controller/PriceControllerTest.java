@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import com.challenge.zara.controller.PriceController;
 import com.challenge.zara.model.Price;
 import com.challenge.zara.service.PriceService;
 import org.junit.jupiter.api.BeforeEach;
@@ -114,6 +113,60 @@ public class PriceControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(mockPrice, response.getBody());
+    }
+
+    @Test
+    public void testGetPriceOutsidePriceRange() {
+        // Test para verificar que el controlador responde con código de estado 404 cuando la fecha está fuera del rango de precios
+        LocalDateTime date = LocalDateTime.of(2021, 1, 1, 10, 0); // Fecha fuera del rango de precios
+        Long productId = 35455L;
+        Long brandId = 1L;
+
+        when(priceService.getPriceByDateAndProductIdAndChainId(date, productId, brandId)).thenReturn(Optional.empty());
+
+        ResponseEntity<Price> response = priceController.getPrice(date, productId, brandId);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testGetPriceForNonexistentProductId() {
+        // Test para verificar que el controlador responde con código de estado 404 cuando el identificador de producto no existe
+        LocalDateTime date = LocalDateTime.of(2020, 6, 14, 10, 0);
+        Long productId = 99999L; // Identificador de producto inexistente
+        Long brandId = 1L;
+
+        when(priceService.getPriceByDateAndProductIdAndChainId(date, productId, brandId)).thenReturn(Optional.empty());
+
+        ResponseEntity<Price> response = priceController.getPrice(date, productId, brandId);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testGetPriceForNonexistentBrandId() {
+        // Test para verificar que el controlador responde con código de estado 404 cuando el identificador de cadena no existe
+        LocalDateTime date = LocalDateTime.of(2020, 6, 14, 10, 0);
+        Long productId = 35455L;
+        Long brandId = 99999L; // Identificador de cadena inexistente
+
+        when(priceService.getPriceByDateAndProductIdAndChainId(date, productId, brandId)).thenReturn(Optional.empty());
+
+        ResponseEntity<Price> response = priceController.getPrice(date, productId, brandId);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testGetPriceWithNullParameters() {
+        // Test para verificar que el controlador responde con código de estado 400 cuando se proporcionan parámetros nulos
+        LocalDateTime date = null;
+        Long productId = null;
+        Long brandId = null;
+
+        ResponseEntity<Price> response = priceController.getPrice(date, productId, brandId);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
 
